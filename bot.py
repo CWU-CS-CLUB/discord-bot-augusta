@@ -41,4 +41,5 @@ async def on_message(message):
 
 token_file = open('token.txt', 'r')
 token = token_file.readline()
+token_file.close()
 client.run(token)
