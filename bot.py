@@ -14,7 +14,7 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 api = 'https://v2.jokeapi.dev/joke/Programming?blacklistFlags=nsfw,religious,political,racist,sexist,explicit'
 
-help_text = 'Current commands:\n$help - shows this message\n$hello - says hello back\n$echo <msg> - echos a msg string'
+help_text = 'Current commands:\n$help - shows this message\n$hello - says hello back\n$echo <msg> - echos a msg string\n$joke - prints a programmer joke'
 
 @client.event
 async def on_ready():
@@ -36,7 +36,7 @@ async def on_message(message):
         await message.channel.send(help_text)
     elif msg == '$joke':
         joke = requests.get(api).json()
-        joke = joke
+        joke = joke  # hacky fix
         await message.channel.send(joke["joke"])
 
 
