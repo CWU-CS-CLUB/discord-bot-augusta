@@ -3,6 +3,7 @@
 
 import discord
 import requests
+from requests import Response
 
 __author__: 'Alice Williams'
 __version__: '0.0.0'
@@ -12,6 +13,8 @@ intents.message_content = True
 
 client = discord.Client(intents=intents)
 api = 'https://v2.jokeapi.dev/joke/Programming?blacklistFlags=nsfw,religious,political,racist,sexist,explicit'
+
+help_text = 'Current commands:\n$help - shows this message\n$hello - says hello back\n$echo <msg> - echos a msg string'
 
 @client.event
 async def on_ready():
@@ -30,13 +33,11 @@ async def on_message(message):
     elif msg.startswith('$echo'):
         await message.channel.send(message.content)
     elif msg.startswith('$help'):
-        await message.channel.send('Current commands:\n$help - shows this message\n$hello - says hello back\n$echo <msg> - echos a msg string')
+        await message.channel.send(help_text)
     elif msg == '$joke':
-        joke = requests.get(api)
-        if "joke" in joke:
-            await message.channel.send(joke["joke"])
-        else:
-            await message.channel.send('joke error occurred')
+        joke = requests.get(api).json()
+        joke = joke
+        await message.channel.send(joke["joke"])
 
 
 token_file = open('token.txt', 'r')
