@@ -1,11 +1,9 @@
 #!/usr/bin/env python
-""" bot.py: Runs Discord API bot 'Augusta' """
+""" bot.py: Entrypoint script that runs Discord API bot 'Augusta' """
 
-from os import wait
 from time import sleep
 import discord
 import requests
-import random
 import constants
 from boto3.dynamodb.conditions import Key
 import DBManagement
@@ -19,8 +17,8 @@ aws_secret_access_key = constants.aws_secret_access_key
 
 region_name = 'us-west-2'
 
-__author__  = 'CWU CS CLUB'
-__version__ = '0.0'
+__author__ = 'CWU CS CLUB'
+__version__ = '0.1-alpha'
 
 intents = discord.Intents.all()
 intents.message_content = True
@@ -28,14 +26,14 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 
 help_text = 'Current commands:\n' \
-            '$help - shows this message\n' \
+            "$help - shows the help for this bot\n" \
             '$hello - says hello back\n' \
-            '$echo <msg> - echos a msg ' \
-            'string\n' \
+            '$echo <msg> - echos a msg string\n' \
             '$joke - prints a programmer joke\n' \
-            '$points - prints your current points\n' \
-            '$users - prints list of users seen\n' \
-            '$userNum - prints number of users seen'
+            '$points - prints your current points balance\n' \
+            '$users - lists all users seen\n' \
+            '$userNum - prints number of users seen\n' \
+            '$version - prints the running bot version'
 
 
 # Runs function every minute. Adds new users and gives out points.
@@ -55,27 +53,28 @@ async def refreshMembers():
     print('Refreshed users for all servers.')
 
 
-# Logs in bot.
+# Event called when bot authenticates with Discord gateway.
 @client.event
 async def on_ready():
     print(f'We have logged in as {client.user}')
     refreshMembers.start()
 
 
-# Bot does something based on command.
+# Event called on message seen by bot.
 @client.event
 async def on_message(message):
+    # Does not respond to self
     if message.author == client.user:
         return
 
     msg = message.content
 
-    # Determines what command to execute.
+    # Hardcoded command routing
     if msg == '$hello':
         await say_hello(message)
-    elif msg.startswith('$echo'):
+    elif msg == '$echo':
         await echo(message)
-    elif msg.startswith('$help'):
+    elif msg == '$help':
         await say_help(message)
     elif msg == '$joke':
         await say_joke(message)
@@ -91,14 +90,14 @@ async def on_message(message):
         await cmd_error(message)
 
 
-# prints a command not found error
+# Command not found error
 async def cmd_error(message):
     await message.channel.sent('Error command not known')
 
     print("Printed command error.")
 
 
-# prints the current script version
+# Prints the current script version
 async def print_version(message):
     await message.channel.send(f'Current version: v{__version__}')
 
@@ -204,7 +203,7 @@ def incrementPoints(user_id, guild_id, incrementalValue=1):
             'guild_id': guild_id
         },
 
-        UpdateExpression=f'set info.user_points = info.user_points + :N',
+        UpdateExpression='set info.user_points = info.user_points + :N',
         ExpressionAttributeValues={
             ':N': incrementalValue
         },
