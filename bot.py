@@ -85,8 +85,25 @@ async def on_message(message):
         await member_count(message)
     elif msg == '$points':
         await get_points(message)
+    elif msg == '$version':
+        await print_version(message)
     elif msg.startswith('$'):
-        await message.channel.send('Error command not known')
+        await cmd_error(message)
+
+
+# prints a command not found error
+async def cmd_error(message):
+    await message.channel.sent('Error command not known')
+
+    print("Printed command error.")
+
+
+# prints the current script version
+async def print_version(message):
+    await message.channel.send(f'Current version: v{__version__}')
+
+    print("Printed version.")
+
 
 # Greets a user with "Hello!".
 async def say_hello(message):
