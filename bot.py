@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""bot.py: Runs Discord API bot 'Augusta'"""
+""" bot.py: Runs Discord API bot 'Augusta' """
 
 from time import sleep
 import discord
@@ -11,21 +11,30 @@ import DBManagement
 import boto3 as boto3
 from discord.ext import tasks
 
+discord_token = constants.discord_token
+joke_api = constants.joke_api
 aws_access_key_id = constants.aws_access_key_id
 aws_secret_access_key = constants.aws_secret_access_key
+
 region_name = 'us-west-2'
 
-__author__: 'Alice Williams'
-__version__: '0.0.0'
+__author__: 'CWU CS CLUB 2023'
+__version__: '0.0'
 
 intents = discord.Intents.all()
 intents.message_content = True
 
 client = discord.Client(intents=intents)
-api = 'https://v2.jokeapi.dev/joke/Programming?blacklistFlags=nsfw,religious,political,racist,sexist,explicit'
 
-help_text = 'Current commands:\n$help - shows this message\n$hello - says hello back\n$echo <msg> - echos a msg ' \
-            'string\n$joke - prints a programmer joke '
+help_text = 'Current commands:\n' \
+            '$help - shows this message\n' \
+            '$hello - says hello back\n' \
+            '$echo <msg> - echos a msg ' \
+            'string\n' \
+            '$joke - prints a programmer joke\n' \
+            '$points - prints your current points\n' \
+            '$users - prints list of users seen\n' \
+            '$userNum - prints number of users seen'
 
 
 # Runs function every minute. Adds new users and gives out points.
@@ -51,7 +60,7 @@ async def on_ready():
     print(f'We have logged in as {client.user}')
     refreshMembers.start()
 
-    
+
 # Bot does something based on command.
 @client.event
 async def on_message(message):
@@ -100,7 +109,7 @@ async def say_help(message):
 
 # Tells a joke based on the settings in JokeAPI URL.
 async def say_joke(message):
-    joke = requests.get(api).json()
+    joke = requests.get(joke_api).json()
 
     if joke["type"] == "single":
         await message.channel.send(joke["joke"])
@@ -111,14 +120,14 @@ async def say_joke(message):
 
     print("Told a joke.")
 
-          
+
 # Prints all members or to the limit in the server by their usernames.
 async def list_users(message, limit=-1):
     # List of all members in the server.
     members = message.guild.members
 
     # Shuffles the order of members in the list
-    random.shuffle(members)
+    # random.shuffle(members)
 
     # If there is no limit then print all users.
     if limit <= 0:
@@ -184,7 +193,4 @@ def incrementPoints(user_id, guild_id, incrementalValue=1):
     )
 
 
-token_file = open('token.txt', 'r')
-token = token_file.readline()
-token_file.close()
-client.run(token)
+client.run(discord_token)
