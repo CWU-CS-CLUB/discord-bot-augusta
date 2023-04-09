@@ -78,7 +78,7 @@ async def on_message(message):
     # Hardcoded command routing
     if msg == '$hello':
         await say_hello(message)
-    elif msg == '$echo':
+    elif msg.startswith('$echo'):
         await echo(message)
     elif msg == '$help':
         await say_help(message)
