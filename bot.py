@@ -2,6 +2,7 @@
 """ bot.py: Entrypoint script that runs Discord API bot 'Augusta' """
 
 from time import sleep
+import pytz
 from datetime import datetime
 import discord
 import requests
@@ -15,6 +16,9 @@ discord_token = constants.discord_token
 joke_api = constants.joke_api
 aws_access_key_id = constants.aws_access_key_id
 aws_secret_access_key = constants.aws_secret_access_key
+
+tz_utc = pytz.timezone('UTC')
+tz_la = pytz.timezone('America/Los_Angeles')
 
 region_name = 'us-west-2'
 
@@ -34,7 +38,7 @@ help_text = 'Current commands:\n' \
             '$points - prints your current points balance\n' \
             '$users - lists all users seen\n' \
             '$userNum - prints number of users seen\n' \
-            '$version - prints the running bot version' \
+            '$version - prints the running bot version\n' \
             '$time - prints the current time'
 
 
@@ -96,7 +100,7 @@ async def on_message(message):
 
 # Prints the current time
 async def time(message):
-    await message.channel.send(f'Current time is: {datetime.now().strftime("%H:%M:%S")}')
+    await message.channel.send(f"The local time is {datetime.now(tz_la).strftime('%H:%M:%S')}")
 
 
 # Command not found error
