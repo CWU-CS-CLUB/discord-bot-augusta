@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """ bot.py: Runs Discord API bot 'Augusta' """
 
+from os import wait
 from time import sleep
 import discord
 import requests
@@ -18,8 +19,8 @@ aws_secret_access_key = constants.aws_secret_access_key
 
 region_name = 'us-west-2'
 
-__author__: 'CWU CS CLUB 2023'
-__version__: '0.0'
+__author__  = 'CWU CS CLUB'
+__version__ = '0.0'
 
 intents = discord.Intents.all()
 intents.message_content = True
@@ -84,7 +85,8 @@ async def on_message(message):
         await member_count(message)
     elif msg == '$points':
         await get_points(message)
-
+    elif msg.startswith('$'):
+        await message.channel.send('Error command not known')
 
 # Greets a user with "Hello!".
 async def say_hello(message):
