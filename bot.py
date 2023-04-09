@@ -2,6 +2,7 @@
 """ bot.py: Entrypoint script that runs Discord API bot 'Augusta' """
 
 from time import sleep
+from datetime import datetime
 import discord
 import requests
 import constants
@@ -33,7 +34,8 @@ help_text = 'Current commands:\n' \
             '$points - prints your current points balance\n' \
             '$users - lists all users seen\n' \
             '$userNum - prints number of users seen\n' \
-            '$version - prints the running bot version'
+            '$version - prints the running bot version' \
+            '$time - prints the current time'
 
 
 # Runs function every minute. Adds new users and gives out points.
@@ -86,13 +88,20 @@ async def on_message(message):
         await get_points(message)
     elif msg == '$version':
         await print_version(message)
+    elif msg == '$time':
+        await time(message)
     elif msg.startswith('$'):
         await cmd_error(message)
 
 
+# Prints the current time
+async def time(message):
+    await message.channel.send(f'Current time is: {datetime.now().strftime("%H:%M:%S")}')
+
+
 # Command not found error
 async def cmd_error(message):
-    await message.channel.sent('Error command not known')
+    await message.channel.send('Error command not known')
 
     print("Printed command error.")
 
