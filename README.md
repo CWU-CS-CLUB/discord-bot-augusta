@@ -4,8 +4,8 @@
 # running
 
 -create a constants.py  
--add the following keys:
-	-discord_token  
-	-aws_access_key_id  
-	-aws_secret_access_key  
+-add the following keys:  
+	-discord_token (from discord dev portal)  
+	-aws_access_key_id (aws dynamodb id)  
+	-aws_secret_access_key (aws dynamodb key)  
 	-joke_api (ex: 'https://v2.jokeapi.dev/joke/Programming?blacklistFlags=nsfw,religious,political,racist,sexist,explicit')  
