@@ -96,6 +96,8 @@ async def on_message(message):
         await print_version(message)
     elif msg == '$time':
         await time(message)
+    elif msg.startswith('$gamble'):
+        await gamble(message)
     elif msg.startswith('$'):
         await cmd_error(message)
 
