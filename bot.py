@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """ bot.py: Entrypoint script that runs Discord API bot 'Augusta' """
 
+import random
 from time import sleep
 import pytz
 from datetime import datetime
@@ -39,7 +40,8 @@ help_text = 'Current commands:\n' \
             '$users - lists all users seen\n' \
             '$userNum - prints number of users seen\n' \
             '$version - prints the running bot version\n' \
-            '$time - prints the current time'
+            '$time - prints the current time\n' \
+            '$gamble (AMOUNT) - gambles amount bet.'
 
 
 # Runs function every minute. Adds new users and gives out points.
@@ -222,6 +224,47 @@ def incrementPoints(user_id, guild_id, incrementalValue=1):
         },
         ReturnValues='UPDATED_NEW'
     )
+
+
+# Gambles a user's points. 50/50 odds with a double return of bet on win.
+async def gamble(message):
+    splitMessage = message.content.split()
+
+    if len(splitMessage) != 2:
+        await message.channel.send('Invalid parameters. There needs to be an amount.')
+        print("Attempted gambling.")
+        return
+    elif not splitMessage[1].isdigit() or int(splitMessage[1]) <= 0:
+        await message.channel.send('Invalid parameters. Amount must be a positive integer.')
+        print("Attempted gambling.")
+        return
+
+    dynamodb = boto3.resource('dynamodb',
+                              aws_access_key_id=aws_access_key_id,
+                              aws_secret_access_key=aws_secret_access_key,
+                              region_name=region_name
+                              )
+
+    table = dynamodb.Table('Users')
+
+    response = table.query(
+        KeyConditionExpression=Key('user_id').eq(message.author.id) & Key('guild_id').eq(message.guild.id))
+
+    funds = int(response['Items'][0]['info']['user_points'])
+
+    if funds < int(splitMessage[1]):
+        await message.channel.send('You do not have {} points.'.format(splitMessage[1]))
+        print("Attempted gambling.")
+        return
+
+    if random.randint(1, 2) == 1:
+        await message.channel.send('Congratulations! You won {} points and now have {} points.'.format(splitMessage[1], int(splitMessage[1]) + funds))
+        incrementPoints(message.author.id, message.guild.id, incrementalValue=int(splitMessage[1]))
+    else:
+        await message.channel.send('You lost {} points and now have {} points.'.format(splitMessage[1], funds - int(splitMessage[1])))
+        incrementPoints(message.author.id, message.guild.id, incrementalValue=(-1 * int(splitMessage[1])))
+
+    print('Successfully gambled.')
 
 
 client.run(discord_token)
