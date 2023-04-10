@@ -4,7 +4,7 @@
 # running
 
 -create a constants.py file in the project root  
--add the following keys (format in: string = 'key'): 
+-add the following keys (format in: string = 'key'):  
 	-discord_token (from discord dev portal)  
 	-aws_access_key_id (aws dynamodb id)  
 	-aws_secret_access_key (aws dynamodb key)  
